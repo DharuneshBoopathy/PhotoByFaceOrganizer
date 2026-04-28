@@ -34,15 +34,14 @@ ROOT = os.path.abspath(os.path.dirname(SPECPATH))
 # Read version from src/version.py without importing it (PyInstaller may not
 # have our project deps available during analysis)
 # ----------------------------------------------------------------------------
-def _read_version() -> str:
-    p = os.path.join(ROOT, "src", "version.py")
+from pathlib import Path
+
+def _read_version():
+    p = Path(__file__).resolve().parent / "src" / "version.py"
     with open(p, "r", encoding="utf-8") as f:
-        m = re.search(r'__version__\s*=\s*"([^"]+)"', f.read())
-    return m.group(1) if m else "0.0.0"
-
-
-VERSION = _read_version()
-
+        for line in f:
+            if "__version__" in line:
+                return line.split("=")[1].strip().strip('"').strip("'")
 
 # ----------------------------------------------------------------------------
 # Vendor packages with native bits / data
