@@ -1,0 +1,72 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.Python
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# --- Build artifacts (NEVER commit these) ---
+build/
+dist/
+installer/Output/
+*.spec.bak
+
+# Inno Setup intermediates
+*.iss.bak
+*.exe.manifest
+
+# PyInstaller intermediates
+*.toc
+*.pyz
+
+# --- Models / large binaries (use Releases, not git) ---
+models/
+*.onnx
+*.onnxruntime
+
+# --- Logs / runtime data ---
+*.log
+*.log.*
+crash_reports/
+manifest.db
+*.db-shm
+*.db-wal
+photo_organizer.db
+test_data/
+output/
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- OS ---
+desktop.ini
+
+# --- Tooling ---
+.coverage
+htmlcov/
+.tox/
+
+# --- Release artifacts that live in dist/ ---
+SHA256SUMS.txt
+*.zip
+
+# --- Project-specific ---
+offline_packages/
+.claude/

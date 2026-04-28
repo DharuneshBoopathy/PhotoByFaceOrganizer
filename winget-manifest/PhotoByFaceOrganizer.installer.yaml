@@ -1,0 +1,32 @@
+# Draft winget installer manifest for `winget install`.
+#
+# Submission flow:
+#   1. Cut a GitHub Release with the Setup .exe and SHA256SUMS.
+#   2. Update `InstallerUrl` and `InstallerSha256` below with the
+#      release URL and the SHA-256 from `SHA256SUMS.txt`.
+#   3. Bump `PackageVersion` here AND in the matching defaultLocale +
+#      version manifests (see below).
+#   4. Open a PR against microsoft/winget-pkgs at:
+#      manifests/d/DharuneshBoopathy/PhotoByFaceOrganizer/<version>/
+#
+# Once accepted, users can install with:
+#   winget install DharuneshBoopathy.PhotoByFaceOrganizer
+
+PackageIdentifier: DharuneshBoopathy.PhotoByFaceOrganizer
+PackageVersion: 1.0.0
+InstallerType: inno
+Scope: user
+Architecture: x64
+InstallerLocale: en-US
+ReleaseDate: 2026-04-28
+
+InstallerUrl: https://github.com/DharuneshBoopathy/PhotoByFaceOrganizer/releases/download/v1.0.0/PhotoByFaceOrganizer-Setup-1.0.0.exe
+InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000  # ← fill in from SHA256SUMS.txt
+
+InstallerSwitches:
+  Silent: /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
+  SilentWithProgress: /SILENT /SUPPRESSMSGBOXES /NORESTART /SP-
+  Custom: /CURRENTUSER
+
+ManifestType: installer
+ManifestVersion: 1.6.0

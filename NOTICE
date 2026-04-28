@@ -1,0 +1,73 @@
+Photo by Face Organizer
+Copyright (c) 2026 Photo by Face Organizer Project
+
+This product includes software developed by third parties. The
+respective copyright notices and license terms are reproduced below.
+
+================================================================================
+InsightFace
+  Copyright (c) 2019 Jiankang Deng
+  License: MIT
+  https://github.com/deepinsight/insightface
+
+ONNX Runtime
+  Copyright (c) Microsoft Corporation
+  License: MIT
+  https://github.com/microsoft/onnxruntime
+
+Pillow (PIL Fork)
+  Copyright (c) 1997-2011 by Secret Labs AB
+  Copyright (c) 1995-2011 by Fredrik Lundh
+  Copyright (c) 2010-2024 by Jeffrey A. Clark and contributors
+  License: HPND (open-source, MIT-compatible)
+  https://github.com/python-pillow/Pillow
+
+OpenCV (opencv-python)
+  Copyright (c) Itseez, OpenCV Foundation, contributors
+  License: Apache 2.0
+  https://github.com/opencv/opencv-python
+
+NumPy
+  Copyright (c) 2005-2024 NumPy Developers
+  License: BSD 3-Clause
+  https://numpy.org
+
+SciPy
+  Copyright (c) 2001-2024 SciPy Developers
+  License: BSD 3-Clause
+  https://scipy.org
+
+scikit-learn
+  Copyright (c) 2007-2024 The scikit-learn developers
+  License: BSD 3-Clause
+  https://scikit-learn.org
+
+scikit-image
+  Copyright (c) 2009-2024 the scikit-image team
+  License: BSD 3-Clause
+  https://scikit-image.org
+
+imagehash
+  Copyright (c) 2013-2024 Johannes Buchner
+  License: BSD 2-Clause
+  https://github.com/JohannesBuchner/imagehash
+
+reverse_geocoder
+  Copyright (c) Ajay Thampi
+  License: LGPLv3
+  https://github.com/thampiman/reverse-geocoder
+
+exifread
+  Copyright (c) 2002-2007 Gene Cash
+  Copyright (c) 2007-2013 Ianaré Sévi
+  License: BSD 3-Clause
+  https://github.com/ianare/exif-py
+
+tqdm
+  Copyright (c) 2013 noamraph
+  License: MIT / MPL 2.0
+  https://github.com/tqdm/tqdm
+
+================================================================================
+Full license texts are available at the URLs above and inside each
+package's distribution metadata in the bundled `_internal/` folder.

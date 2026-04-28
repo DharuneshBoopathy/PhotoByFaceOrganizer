@@ -1,0 +1,137 @@
+name: build
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Optional release tag (e.g. v1.2.3) — leave blank for a draft snapshot"
+        required: false
+
+permissions:
+  contents: write   # needed to create / edit GitHub Releases
+
+jobs:
+  windows-build:
+    name: Build Windows .exe + installer
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install runtime deps
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Generate app icon (if missing)
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "assets\app_icon.ico")) {
+            python tools\make_app_icon.py
+          }
+
+      - name: PyInstaller — build folder bundle
+        shell: pwsh
+        run: |
+          if (Test-Path build) { Remove-Item build -Recurse -Force }
+          if (Test-Path dist)  { Remove-Item dist  -Recurse -Force }
+          python -m PyInstaller PhotoByFaceOrganizer.spec --clean --noconfirm
+
+      - name: Verify bundle has the heavy deps
+        shell: pwsh
+        run: |
+          $required = @("PIL", "cv2", "imagehash", "insightface",
+                        "onnx", "onnxruntime", "skimage", "numpy",
+                        "scipy", "sklearn")
+          $missing = @()
+          foreach ($pkg in $required) {
+            if (-not (Test-Path "dist\PhotoByFaceOrganizer\_internal\$pkg")) {
+              $missing += $pkg
+            }
+          }
+          if ($missing.Count -gt 0) {
+            Write-Error "Missing from bundle: $($missing -join ', ')"
+            exit 1
+          }
+          Write-Host "All required packages present."
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          # Confirm
+          if (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe") {
+            Write-Host "Inno Setup ready."
+          } else {
+            Write-Error "Inno Setup install failed"
+            exit 1
+          }
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build portable ZIP
+        shell: pwsh
+        run: python tools\make_portable_zip.py
+
+      - name: Generate SHA256 checksums
+        shell: pwsh
+        run: python tools\make_checksums.py
+
+      - name: List release artifacts
+        shell: pwsh
+        run: |
+          Write-Host "=== installer\Output ==="
+          Get-ChildItem installer\Output -Recurse | Format-Table FullName, Length
+          Write-Host "=== dist\portable ==="
+          Get-ChildItem dist\portable -Recurse | Format-Table FullName, Length
+          Write-Host "=== checksums ==="
+          Get-Content SHA256SUMS.txt
+
+      - name: Upload artifacts (workflow run)
+        uses: actions/upload-artifact@v4
+        with:
+          name: PhotoByFaceOrganizer-${{ github.ref_name }}
+          path: |
+            installer/Output/*.exe
+            dist/portable/*.zip
+            SHA256SUMS.txt
+          retention-days: 30
+
+      - name: Create GitHub Release (only on tag push)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Photo by Face Organizer ${{ github.ref_name }}"
+          body: |
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md) for full notes.
+
+            **Download:**
+            - `PhotoByFaceOrganizer-Setup-*.exe` — installer (recommended)
+            - `PhotoByFaceOrganizer-*-portable.zip` — unzip-and-run
+
+            **Verify:**
+            ```powershell
+            Get-FileHash .\PhotoByFaceOrganizer-Setup-*.exe -Algorithm SHA256
+            ```
+            Compare against `SHA256SUMS.txt`.
+          draft: true
+          prerelease: false
+          files: |
+            installer/Output/*.exe
+            dist/portable/*.zip
+            SHA256SUMS.txt

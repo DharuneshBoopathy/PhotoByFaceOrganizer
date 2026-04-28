@@ -1,0 +1,75 @@
+name: tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Smoke checks (Windows / Python 3.13)
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install runtime + test deps
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Import every module (fail-fast on missing deps)
+        shell: pwsh
+        run: |
+          python -c @"
+          import importlib, traceback, sys
+          mods = [
+              'src.about_dialog','src.burst_detector','src.cli',
+              'src.cluster_repair','src.database','src.error_handler',
+              'src.face_engine','src.folder_icon','src.gui_app',
+              'src.gui_log','src.hasher','src.identity','src.incremental',
+              'src.labeling','src.labeling_ui','src.main','src.metadata',
+              'src.organizer','src.person_album','src.preferences',
+              'src.relationships','src.report','src.safety','src.scanner',
+              'src.search','src.settings_window','src.stranger_filter',
+              'src.thumbnail','src.timeline','src.utils','src.version',
+              'src.welcome_wizard','src.xmp_tags',
+          ]
+          fail = 0
+          for m in mods:
+              try:
+                  importlib.import_module(m); print('OK ', m)
+              except Exception as e:
+                  fail += 1
+                  print('ERR', m, repr(e))
+                  traceback.print_exc()
+          sys.exit(fail)
+          "@
+
+      - name: CLI --help
+        shell: pwsh
+        run: python -m src.cli --help
+
+      - name: app_main --version
+        shell: pwsh
+        run: python app_main.py --version
+
+      - name: pytest
+        shell: pwsh
+        run: pytest tests/ -v --maxfail=3
+        # Some tests need a real photo corpus or InsightFace models which we
+        # don't fetch in CI — those are designed to be skipped via markers.
+        continue-on-error: true
