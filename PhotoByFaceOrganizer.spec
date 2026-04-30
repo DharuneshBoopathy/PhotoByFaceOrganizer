@@ -1,4 +1,5 @@
-def _read_version():
-    # Some other lines of code
-    p = Path(SPECPATH).resolve().parent / "src" / "version.py"  # updated line
-    # Rest of the function
+# Updated file content with the new path assignment
+
+# Previous content omitted for brevity...
+p = Path(SPECPATH).resolve().parent / "src" / "version.py"
+# Remaining content of the file omitted for brevity...
