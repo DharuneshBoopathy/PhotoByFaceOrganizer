@@ -43,6 +43,9 @@ def _read_version():
             if "__version__" in line:
                 return line.split("=")[1].strip().strip('"').strip("'")
 
+
+VERSION = _read_version()
+
 # ----------------------------------------------------------------------------
 # Vendor packages with native bits / data
 # ----------------------------------------------------------------------------
