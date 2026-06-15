@@ -46,7 +46,7 @@ jobs:
         run: |
           if (Test-Path build) { Remove-Item build -Recurse -Force }
           if (Test-Path dist)  { Remove-Item dist  -Recurse -Force }
-          python -m PyInstaller PhotoByFaceOrganizer.spec --clean --noconfirm
+          python -m PyInstaller PhotoOrganizer.spec --clean --noconfirm
 
       - name: Verify bundle has the heavy deps
         shell: pwsh
@@ -56,7 +56,7 @@ jobs:
                         "scipy", "sklearn")
           $missing = @()
           foreach ($pkg in $required) {
-            if (-not (Test-Path "dist\PhotoByFaceOrganizer\_internal\$pkg")) {
+            if (-not (Test-Path "dist\PhotoOrganizer\_internal\$pkg")) {
               $missing += $pkg
             }
           }
@@ -105,7 +105,7 @@ jobs:
       - name: Upload artifacts (workflow run)
         uses: actions/upload-artifact@v4
         with:
-          name: PhotoByFaceOrganizer-${{ github.ref_name }}
+          name: PhotoOrganizer-${{ github.ref_name }}
           path: |
             installer/Output/*.exe
             dist/portable/*.zip
@@ -121,12 +121,12 @@ jobs:
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md) for full notes.
 
             **Download:**
-            - `PhotoByFaceOrganizer-Setup-*.exe` — installer (recommended)
-            - `PhotoByFaceOrganizer-*-portable.zip` — unzip-and-run
+            - `PhotoOrganizer-Setup-*.exe` — installer (recommended)
+            - `PhotoOrganizer-*-portable.zip` — unzip-and-run
 
             **Verify:**
             ```powershell
-            Get-FileHash .\PhotoByFaceOrganizer-Setup-*.exe -Algorithm SHA256
+            Get-FileHash .\PhotoOrganizer-Setup-*.exe -Algorithm SHA256
             ```
             Compare against `SHA256SUMS.txt`.
           draft: true
